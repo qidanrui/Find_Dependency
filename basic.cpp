@@ -1,37 +1,44 @@
 #include <iostream>
 using namespace std;
 #include <fstream>
-#include "Basic.h"
+#include "basic.h"
 
 data_node m_data[100000];
 
-int readFromFile(char* filename)
+int readFromFile(string filename)
 {
-	ifstream infile(filename);
-	char buffer[256];
-	int number;//total number
-	if (!infile.is_open())
-	{
-		cout << "Error opening file" << endl;
-		return 0;
-	}
-	number = 0;
-	while (!infile.eof())
-	{
-		infile.getline(buffer, 256);
-		//cout << buffer << endl;
-		m_data[number] = spiltline(buffer);
-		//outPutNode(m_data[number]);
-		number++;
-	}
-	infile.close();
-	return number;
+    fstream fin;
+    string buffer;
+    int number;
+    int length;
+    try{
+        fin.open(filename, ios::in);
+    }
+    catch (exception& e){
+        cout << e.what() << '\n';
+        return -1;
+    }
+    number = 0;
+    while (true)
+    {
+        getline(fin, buffer);
+        length = buffer.length();
+        if(length <= 2){
+            break;
+        }
+        m_data[number] = spiltline(buffer, length);
+        number++;
+        if(!fin.good()){
+            break;
+        }
+    }
+    fin.close();
+    return number;
 }
 
-data_node spiltline(string buffer)
+data_node spiltline(string buffer, int length)
 {
 	data_node Node;
-	int length = buffer.length();
 	string temp;
 	int number;
 	int i, start, n_item;
@@ -81,10 +88,6 @@ data_node spiltline(string buffer)
 			case 11:
 				Node.item11 = temp;
 				break;
-				/*case 12:
-				number = atoi(temp.c_str());
-				Node.item12 = number;
-				break;*/
 			default:
 				break;
 			}
@@ -98,20 +101,4 @@ data_node spiltline(string buffer)
 
 
 	return Node;
-}
-
-void outPutNode(data_node Node)
-{
-	cout << Node.item1 << " ";
-	cout << Node.item2 << " ";
-	cout << Node.item3 << " ";
-	cout << Node.item4 << " ";
-	cout << Node.item5 << " ";
-	cout << Node.item6 << " ";
-	cout << Node.item7 << " ";
-	cout << Node.item8 << " ";
-	cout << Node.item9 << " ";
-	cout << Node.item10 << " ";
-	cout << Node.item11 << " ";
-	cout << Node.item12 << endl;
 }
